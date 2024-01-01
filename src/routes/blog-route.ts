@@ -67,7 +67,6 @@ blogRoute.post('/',
 // create post for specified blog
 blogRoute.post('/:blogId/posts',
     authMiddleware,
-
     blogValidationPostToBlog(),
     async (req: Request, res: Response) => {
         const newPostId = await PostsService.createPost({blogId: req.params.blogId, ...req.body})
