@@ -8,8 +8,6 @@ import {BlogsQueryRepository} from "../repositories/blogs-query-repository";
 export class PostsService {
     static async createPost(inputData: CreatePostInputModel) {
 
-
-
         const blog= await BlogsQueryRepository
             .findBlogById(inputData.blogId)
         if (!blog) return null
