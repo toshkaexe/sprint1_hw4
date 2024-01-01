@@ -28,6 +28,15 @@ blogRoute.get('/',
         res.send(foundBlogs)
     })
 
+
+blogRoute.post('/',
+    authMiddleware,
+    blogValidation(),
+    async (req: Request, res: Response): Promise<void> => {
+        const newBlog = await BlogService.createBlog(req.body)
+        res.status(StatusCode.CREATED_201).send(newBlog)
+    })
+
 blogRoute.get('/:blogId',
     async (req: Request, res: Response): Promise<void> => {
         const foundBlog: OutputBlogModel | null = await BlogsQueryRepository.findBlogById(req.params.blogId)
@@ -45,7 +54,7 @@ blogRoute.get('/:blogId/posts',
         }
         const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
 
-        const posts = await BlogsQueryRepository.getPostsForBlog(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
+        const posts = await BlogsQueryRepository.getPostsToBlog(req.params.blogId, pageNumber, pageSize, sortBy, sortDirection)
         if (!posts) {
             res.sendStatus(404)
             return
@@ -53,19 +62,10 @@ blogRoute.get('/:blogId/posts',
         res.status(200).send(posts)
     })
 
-blogRoute.post('/',
-    authMiddleware,
-    blogValidation(),
- //   inputValidationMiddleware,
-    async (req: Request, res: Response): Promise<void> => {
-        const newBlog = await BlogService.createBlog(req.body)
-        res.status(StatusCode.CREATED_201).send(newBlog)
-    })
 
 blogRoute.post('/:blogId/posts',
     authMiddleware,
     blogValidation(),
- //   inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const newPost = await PostsService.createPost({blogId: req.params.blogId, ...req.body})
         if (!newPost) {
@@ -78,7 +78,6 @@ blogRoute.post('/:blogId/posts',
 blogRoute.put('/:blogId',
     authMiddleware,
     blogValidation(),
-   // inputValidationMiddleware,
     async (req: Request, res: Response): Promise<void> => {
         const blogId = req.params.blogId
         const isUpdated = await BlogService.updateBlog(blogId, req.body)

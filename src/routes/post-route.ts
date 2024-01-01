@@ -25,6 +25,7 @@ import {OutputBlogModel} from "../models/blogs/blog-models";
 
 export const postRoute = Router({})
 
+//get
 postRoute.get('/', async (req: Request, res: Response) => {
     const { pageNumber, pageSize, sortBy, sortDirection } = getPageOptions(req.query);
 
@@ -33,22 +34,20 @@ postRoute.get('/', async (req: Request, res: Response) => {
     res.send(foundPosts)
 })
 
-postRoute.get('/:postId', async (req: Request, res: Response) => {
-    const foundPost: OutputPostModel | null =
-        await PostsQueryRepository.findPostById(req.params.postId)
-    foundPost ? res.status(StatusCode.OK_200).send(foundPost) : res.sendStatus(StatusCode.NOT_FOUND_404)
-})
-
 postRoute.post('/',
     authMiddleware,
     postValidation(),
-  //  inputValidationMiddleware,
     async (req: Request, res: Response) => {
         const newPost = await PostsService.createPost(req.body)
         newPost ? res.status(StatusCode.CREATED_201).send(newPost) :
             res.sendStatus(StatusCode.NOT_FOUND_404)
     })
 
+postRoute.get('/:postId', async (req: Request, res: Response) => {
+    const foundPost: OutputPostModel | null =
+        await PostsQueryRepository.findPostById(req.params.postId)
+    foundPost ? res.status(StatusCode.OK_200).send(foundPost) : res.sendStatus(StatusCode.NOT_FOUND_404)
+})
 //put
 postRoute.put('/:postId',
     authMiddleware,

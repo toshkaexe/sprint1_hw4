@@ -41,11 +41,11 @@ export class BlogsQueryRepository {
         }
     }
 
-    static async getPostsForBlog(id: string,
-                                 pageNumber: number,
-                                 pageSize: number,
-                                 sortBy: string,
-                                 sortDirection: string) {
+    static async getPostsToBlog(id: string,
+                                pageNumber: number,
+                                pageSize: number,
+                                sortBy: string,
+                                sortDirection: string) {
         try {
             if (!ObjectId.isValid(id)) return null
             let sortOptions: { [key: string]: 1 | -1 } = {
@@ -73,8 +73,8 @@ export class BlogsQueryRepository {
                 totalCount,
                 items: posts.map(postMapper)
             } : null
-        } catch (e) {
-            return e
+        } catch (err) {
+            return err
         }
     }
 
