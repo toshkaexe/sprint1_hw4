@@ -1,5 +1,7 @@
-import {BlogDBType, DBType, PostDBType} from "../models/db/db";
+import {DBType} from "../models/db/db";
 import {MongoClient} from "mongodb";
+import {BlogDbModel} from "../models/blogs/blog-models";
+import {PostDbModel} from "../models/posts/posts-models";
 
 export const db: DBType = {
     blogs: [],
@@ -17,8 +19,8 @@ console.log("url: ", uri);
 export const client = new MongoClient(uri);
 export const database = client.db('blogs-hws')
 
-export const blogsCollection = database.collection<BlogDBType>('blogs');
-export const postsCollection = database.collection<PostDBType>('posts');
+export const blogsCollection = database.collection<BlogDbModel>('blogs');
+export const postsCollection = database.collection<PostDbModel>('posts');
 
 export const runDB = async () => {
     try {
