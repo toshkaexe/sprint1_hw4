@@ -20,9 +20,36 @@ export const websiteUrlValidation = body("websiteUrl")
     .matches("^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$")
     .withMessage("website url does not match the template!");
 
+
+
+export const titleValidation = body("title")
+    .isString()
+    .trim()
+    .isLength({min: 1, max: 30})
+    .withMessage("title is too long");
+
+export const shortDescriptionValidation = body("shortDescription")
+    .isString()
+    .trim()
+    .isLength({min: 1, max: 100})
+    .withMessage("Incorrect description!");
+
+export const contentValidation = body("content")
+    .isString()
+    .trim()
+    .isLength({min: 1, max: 1000})
+    .withMessage("content is too long");
+
 export const blogValidation = ()=>[
     nameValidation,
     descriptionValidation,
     websiteUrlValidation,
+    inputValidation
+]
+
+export const blogValidationPostToBlog = ()=>[
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
     inputValidation
 ]

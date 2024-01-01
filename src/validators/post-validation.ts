@@ -9,7 +9,7 @@ const blogIdValidation = body("blogId")
         const blog = await BlogRepository.getBlogById(value);
 
         if (!blog ) {
-            //return false;
+
             throw new Error("Blog is not exist")
         }
             return true;

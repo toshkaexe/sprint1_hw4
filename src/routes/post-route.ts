@@ -38,9 +38,13 @@ postRoute.post('/',
     authMiddleware,
     postValidation(),
     async (req: Request, res: Response) => {
-        const newPost = await PostsService.createPost(req.body)
+        const newPostId = await PostsService.createPost(req.body)
+        if (!newPostId) return res.sendStatus(404);
+
+        const newPost = await PostsQueryRepository.findPostById(newPostId)
         newPost ? res.status(StatusCode.CREATED_201).send(newPost) :
             res.sendStatus(StatusCode.NOT_FOUND_404)
+        return
     })
 
 postRoute.get('/:postId', async (req: Request, res: Response) => {

@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import {BlogRepository} from "../repositories/blog-repository";
 import {authMiddleware} from "../middlewares_validation/auth-middlewares";
-import {blogValidation, nameValidation} from "../validators/blog-validation";
+import {blogValidation, blogValidationPostToBlog, nameValidation} from "../validators/blog-validation";
 import {randomUUID} from "crypto";
 import {db} from '../db/db'
 import {StatusCode
@@ -13,6 +13,7 @@ import {getPageOptions} from "../types/type";
 import {BlogsQueryRepository} from "../repositories/blogs-query-repository";
 import {postValidation} from "../validators/post-validation";
 import {PostsService} from "../domain/posts-service";
+import {PostsQueryRepository} from "../repositories/posts-query-repository";
 
 
 export const blogRoute = Router({})
@@ -29,13 +30,6 @@ blogRoute.get('/',
     })
 
 
-blogRoute.post('/',
-    authMiddleware,
-    blogValidation(),
-    async (req: Request, res: Response): Promise<void> => {
-        const newBlog = await BlogService.createBlog(req.body)
-        res.status(StatusCode.CREATED_201).send(newBlog)
-    })
 
 blogRoute.get('/:blogId',
     async (req: Request, res: Response): Promise<void> => {
@@ -63,11 +57,23 @@ blogRoute.get('/:blogId/posts',
     })
 
 
-blogRoute.post('/:blogId/posts',
+blogRoute.post('/',
     authMiddleware,
     blogValidation(),
+    async (req: Request, res: Response): Promise<void> => {
+        const newBlog = await BlogService.createBlog(req.body)
+        res.status(StatusCode.CREATED_201).send(newBlog)
+    })
+// create post for specified blog
+blogRoute.post('/:blogId/posts',
+    authMiddleware,
+
+    blogValidationPostToBlog(),
     async (req: Request, res: Response) => {
-        const newPost = await PostsService.createPost({blogId: req.params.blogId, ...req.body})
+        const newPostId = await PostsService.createPost({blogId: req.params.blogId, ...req.body})
+        if (!newPostId) return res.sendStatus(404);
+
+        const newPost = await PostsQueryRepository.findPostById(newPostId)
         if (!newPost) {
             return res.sendStatus(StatusCode.NOT_FOUND_404)
         }

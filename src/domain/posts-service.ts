@@ -1,8 +1,6 @@
-import {CreateBlogModel, UpdateBlogModel} from "../models/blogs/blog-models";
+
 import {PostsRepository} from "../repositories/posts-repository";
 import {UpdatePostModel, CreatePostInputModel, PostDbModel} from "../models/posts/posts-models";
-import {Params} from "../models/common";
-import {BlogRepository} from "../repositories/blog-repository";
 import {BlogsQueryRepository} from "../repositories/blogs-query-repository";
 
 export class PostsService {
